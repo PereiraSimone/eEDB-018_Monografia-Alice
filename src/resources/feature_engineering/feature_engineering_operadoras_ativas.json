@@ -1,0 +1,112 @@
+{
+    "dataset": "feature_store_operadoras",
+    "description": "Pipeline de ETL e Feature Engineering para o cadastro de operadoras.",
+    "source_path": "s3a://raw-data/Relatorio_cadop.csv",
+    "format": [
+        "csv"
+    ],
+    "options": {
+        "header": true,
+        "delimiter": ";"
+    },
+    "schema": {
+        "active": true,
+        "type": "json",
+        "path": "s3a://schema/schema_operadoras_ativas.json"
+    },
+    "output_path": "s3a://feature-store/feature_engineering_operadoras_ativas.json",
+    "transformations": [
+        {
+            "method": "deduplicate_by_key",
+            "args": {
+                "key": {
+                    "partition_by_cols": [
+                        "CNPJ"
+                    ],
+                    "order_by_col": "Data_Registro_ANS",
+                    "ascending": false
+                }
+            }
+        },
+        {
+            "method": "trim_columns",
+            "args": {
+                "columns": [
+                    "Razao_Social",
+                    "Nome_Fantasia",
+                    "Modalidade",
+                    "Cidade"
+                ]
+            }
+        },
+        {
+            "method": "change_case",
+            "args": {
+                "case_type": "upper",
+                "columns": [
+                    "UF",
+                    "Cidade"
+                ]
+            }
+        },
+        {
+            "method": "with_conditional_column",
+            "args": {
+                "new_col_name": "Porte_Telefone",
+                "conditions": {
+                    "DDD <= 19": "SP",
+                    "DDD > 19 AND DDD <= 30": "RJ/ES",
+                    "DDD > 30 AND DDD <= 40": "MG"
+                },
+                "otherwise_value": "Outras Regiões"
+            }
+        },
+        {
+            "method": "apply_expressions",
+            "args": {
+                "expressions": {
+                    "ano_registro": "year(Data_Registro_ANS)"
+                }
+            }
+        },
+        {
+            "method": "add_window_aggregate",
+            "args": {
+                "new_col_name": "media_registro_por_ano_uf",
+                "agg_func": "count",
+                "agg_col": "REGISTRO_OPERADORA",
+                "partition_by_cols": [
+                    "ano_registro",
+                    "UF"
+                ]
+            }
+        },
+        {
+            "method": "hash_column",
+            "args": {
+                "new_col_name": "cnpj_hash",
+                "source_col": "CNPJ"
+            }
+        },
+        {
+            "method": "drop_columns",
+            "args": {
+                "columns_to_drop": [
+                    "Fax",
+                    "Complemento",
+                    "Telefone"
+                ]
+            }
+        }
+    ],
+    "validations": [
+        {
+            "active": true,
+            "validation_name": "Valida se a coluna 'ano_registro' foi criada e não tem nulos",
+            "validation_type": "DataCompleteness",
+            "metric": "percent_null_fields",
+            "column": "ano_registro",
+            "threshold_fail": 0
+        }
+    ]
+}

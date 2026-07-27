@@ -1,0 +1,25 @@
+{
+  "type": "struct",
+  "fields": [
+    { "name": "REGISTRO_OPERADORA", "type": "integer", "nullable": true, "metadata": {} },
+    { "name": "CNPJ", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Razao_Social", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Nome_Fantasia", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Modalidade", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Logradouro", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Numero", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Complemento", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Bairro", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Cidade", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "UF", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "CEP", "type": "integer", "nullable": true, "metadata": {} },
+    { "name": "DDD", "type": "integer", "nullable": true, "metadata": {} },
+    { "name": "Telefone", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Fax", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Endereco_eletronico", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Representante", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Cargo_Representante", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Regiao_de_Comercializacao", "type": "string", "nullable": true, "metadata": {} },
+    { "name": "Data_Registro_ANS", "type": "date", "nullable": true, "metadata": {} }
+  ]
+}

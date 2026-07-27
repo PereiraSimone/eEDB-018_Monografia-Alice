@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  data-quality-framework:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: data-quality:latest
+    container_name: dq_framework_runner
+    volumes:
+      # Mapeia a pasta de dados local para dentro do container
+      - ./data:/app/data
+      # Mapeia a pasta de saída para vermos os resultados
+      - ./data_output:/app/data/output
+    command: >
+      /bin/bash -c "echo 'Iniciando job de Data Quality...' && /opt/spark/bin/spark-submit `
+        /app/src/app_analyses.py `
+        --config-path /app/src/resources/datatesets `
+        --datasets operadoras_saude_ativas `
+        --output-path /app/data/output/execution_result"
