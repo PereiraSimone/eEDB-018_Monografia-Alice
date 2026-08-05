@@ -1,0 +1,39 @@
+---
+config:
+  theme: base
+  themeVariables:
+    fontFamily: Inter
+  layout: elk
+---
+flowchart TB
+    QA@{ label: "<b>QA / Analista de Negócios</b><br><span style=\"font-size:12px\">[Person]</span>" } -. Commit (Contratos) .-> CICD@{ label: "<b>Pipeline de CI/CD</b><br><span style=\"font-size:12px\">[Software System]</span><br><br><span style=\"font-size:12px\">Fase 1: Testa o código<br>e orquestra o deploy.</span>" }
+    DE@{ label: "<b>Engenheiro de Dados</b><br><span style=\"font-size:12px\">[Person]</span>" } -. Commit (Pipelines) .-> CICD
+    CICD -. "1. Valida estrutura do código validando os artefatos" .-> ALICE@{ label: "<b>Framework A.L.I.C.E. (Soda + PySpark)</b><br><span style=\"font-size:12px\">[Software System]</span><br><br><span style=\"font-size:13px\">Motor que atua como <i>Circuit Breaker</i>.</span>" }
+    CICD -. "2. Faz deploy seguro com<br>versão atualizada dos artefatos" .-> CLOUD@{ label: "<b>Cloud (Storage)</b><br><span style=\"font-size:12px\">[Infrastructure]</span><br><br><span style=\"font-size:12px\">Guarda os contratos<br>(YAML) aprovados.</span>" }
+    AIRFLOW@{ label: "<b>Orquestrador (Airflow)</b><br><span style=\"font-size:12px\">[Software System]</span><br><br><span style=\"font-size:12px\">Fase 2: Fluxo diário<br>de dados.</span>" } -. "3. Lê a versão atual dos artefatos e valida<br>qualidade de dados" .-> CLOUD
+    AIRFLOW -. "4. Orquestra a varredura dos schemas e dos contratos de dados" .-> ALICE
+    ALICE -. "5. Executa as regras lendo do repositório de origem" .-> REPO@{ label: "<b>Repositório de Dados</b><br><span style=\"font-size:12px\">[System]</span><br><br><span style=\"font-size:12px\">Ex: Data Lake, S3.</span>" }
+    ALICE -. "6. Emite alertas para ferramentas" .-> OBS@{ label: "<b>Observabilidade</b><br><span style=\"font-size:12px\">[System]</span><br><br><span style=\"font-size:12px\">Ex: Grafana, Slack.</span>" }
+
+    QA@{ shape: rect}
+    CICD@{ shape: rect}
+    DE@{ shape: rect}
+    ALICE@{ shape: rect}
+    CLOUD@{ shape: rect}
+    AIRFLOW@{ shape: rect}
+    REPO@{ shape: rect}
+    OBS@{ shape: rect}
+     QA:::person
+     CICD:::system_cicd
+     DE:::person
+     ALICE:::system_alice
+     CLOUD:::system_cloud
+     AIRFLOW:::system_cicd
+     REPO:::system_repo
+     OBS:::system_obs
+    classDef person fill:#ffffff,stroke:#16a34a,stroke-width:2px,color:#166534,rx:10,ry:10
+    classDef system_alice fill:#f0f9ff,stroke:#2563eb,stroke-width:2px,color:#1e40af,rx:8,ry:8
+    classDef system_cicd fill:#ffffff,stroke:#64748b,stroke-width:2px,color:#475569,rx:5,ry:5
+    classDef system_cloud fill:#ffffff,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6,rx:5,ry:5
+    classDef system_repo fill:#ffffff,stroke:#f59e0b,stroke-width:2px,color:#b45309,rx:5,ry:5
+    classDef system_obs fill:#ffffff,stroke:#ef4444,stroke-width:2px,color:#b91c1c,rx:5,ry:5
