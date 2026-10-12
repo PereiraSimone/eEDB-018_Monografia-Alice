@@ -1,0 +1,41 @@
+name: A.L.I.C.E. CI/CD - Validação de Contratos
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    paths:
+      - 'soda_checks/**'
+      - 'src/resources/schemas/**'
+
+jobs:
+  validate_contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout do Código
+        uses: actions/checkout@v3
+
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 📦 Instalar Dependências (Framework A.L.I.C.E.)
+        run: |
+          pip install -r requirements.txt
+          pip install jsonschema soda-core
+
+      - name: 🔍 Validar Estrutura e Quebra de Contrato (JSON/YAML)
+        id: contract_validation
+        run: |
+          echo "Iniciando validação estática dos contratos..."
+          python scripts/validate_contracts.py
+
+      - name: 🚀 Deploy para o Databricks (Apenas se a validação passar)
+        if: success()
+        run: |
+          echo "Contratos validados com sucesso! O Exit Code foi 0."
+          echo "Realizando upload dos artefatos para o Volume do Databricks..."
+          # Aqui entraria o comando do Databricks CLI: databricks fs cp ...
