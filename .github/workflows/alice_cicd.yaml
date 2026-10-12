@@ -13,7 +13,7 @@ on:
 jobs:
   validate_contracts:
     runs-on: ubuntu-latest
-steps:
+    steps:
       - name: 📥 Checkout do Código
         uses: actions/checkout@v4
 
