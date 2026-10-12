@@ -1,0 +1,89 @@
+# checks for a Spark DataFrame named 'operadoras_ativas_view'
+
+checks for operadoras_ativas_view:
+  # --- Completeness Checks (antigo completeness.py) ---
+  - missing_count(REGISTRO_OPERADORА) = 0:
+      name: O registro da operadora não pode ser nulo
+  - missing_count(CNPJ) = 0:
+      name: O CNPJ não pode ser nulo
+
+  # --- Accuracy/Uniqueness Checks (antigo accuracy.py) ---
+  - duplicate_count(REGISTRO_OPERADORA) = 0:
+      name: O registro da operadora deve ser único
+
+  # --- Validity Checks (antigo validity.py) ---
+  - invalid_count(UF) = 0:
+      name: A UF deve ser um estado válido
+      valid values: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
+
+  # --- Warning Example ---
+  - missing_count(Nome_Fantasia):
+      name: Nome Fantasia deveria ser preenchido
+      warn: when > 0
+
+  - row_count:
+      name: Verifica quantidade de operadoras ativas cadastradas
+      warn: when < 1
+      fail: when = 0
+      info: when > 100
+
+  # --- Custom Expression Check Example ---
+  - custom_check: 
+      expression: "COUNT(DISTINCT CNPJ) = COUNT(CNPJ)"
+      name: Todos os CNPJs devem ser únicos
+      fail: when false
+      info: when true
+    
+  # --- Profiling Check Example ---
+  - profiling_check:
+      column: QTDE_CLIENTES
+      name: Verifica estatísticas básicas da coluna QTDE_CLIENTES
+      stats:
+        - min
+        - max
+        - avg
+        - stddev
+      info: when true
+      warn: when false
+
+  # --- Historical Change Check Example ---
+  - historical_change_check:
+      column: QTDE_CLIENTES
+      name: Verifica mudanças históricas na quantidade de clientes
+      change_threshold: 0.2
+      fail: when change > change_threshold
+      info: when change <= change_threshold
+
+  # --- Distribution Change Check Example ---
+  - distribution_change_check:
+      column: QTDE_CLIENTES
+      name: Verifica mudanças na distribuição da quantidade de clientes
+      method: kolmogorov_smirnov
+      threshold: 0.05
+      fail: when p_value < threshold
+      info: when p_value >= threshold
+  # --- Custom SQL Check Example ---
+  - sql_check:
+      sql: |
+        SELECT COUNT(*) FROM operadoras_ativas_view WHERE QTDE_CLIENTES < 0
+      name: Verifica se há operadoras com quantidade negativa de clientes
+      fail: when > 0
+      info: when = 0
+  # --- Anomaly Detection Check Example ---
+  - anomaly_detection_check:  
+      column: QTDE_CLIENTES
+      name: Detecta anomalias na quantidade de clientes
+      method: isolation_forest
+      contamination: 0.01
+      fail: when anomalies > 0
+      info: when anomalies = 0
+
+  # --- Custom Python Check Example ---
+  - python_check: 
+      script: |
+        def check(df):
+            invalid_rows = df.filter(df['QTDE_CLIENTES'] < 0).count()
+            return invalid_rows
+      name: Verifica se há operadoras com quantidade negativa de clientes usando Python
+      fail: when result > 0
+      info: when result = 0

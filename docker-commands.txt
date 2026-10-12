@@ -1,0 +1,34 @@
+docker-compose up --build -d
+
+
+docker-compose exec spark-master /opt/spark/bin/spark-submit `
+    --master spark://spark-master:7077 `
+    --packages org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 `
+    /opt/spark/work-dir/app_analyses.py `
+    --config-path /opt/spark/work-dir/resources/datatesets `
+    --datasets operadoras_saude_ativas `
+    --output-path s3a://reports/execution_result 
+
+
+
+docker-compose exec spark-master /opt/spark/bin/spark-submit `
+    --master spark://spark-master:7077 `
+    --packages org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 `
+    /opt/spark/work-dir/metrics_process/runner/trainner_runner.py `
+    --historical-path s3a://reports/execution_result `
+    --labeled-path s3a://data-governance/execution_result
+
+docker-compose exec spark-master /opt/spark/bin/spark-submit `
+    --master spark://spark-master:7077 `
+    --packages org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 `
+    /opt/spark/work-dir/app_training.py `
+    --labeled-path s3a://data-governance/treino_
+
+
+    docker-compose exec spark-master /opt/spark/bin/spark-submit \
+    --master spark://spark-master:7077 \
+    --packages org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+    /opt/spark/work-dir/app_analyses.py \
+    --config-path /opt/spark/work-dir/resources/datatesets \
+    --datasets operadoras_test_suite_v2 \
+    --output-path s3a://reports/historical_dq_results
