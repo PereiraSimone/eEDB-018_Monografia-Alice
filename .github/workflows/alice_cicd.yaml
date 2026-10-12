@@ -31,7 +31,7 @@ jobs:
         id: contract_validation
         run: |
           echo "Iniciando validação estática dos contratos..."
-          python src/governance/validate_contracts.py
+          python scripts/validate_contracts.py
 
       - name: 🚀 Deploy para o Databricks (Apenas se a validação passar)
         if: success()
