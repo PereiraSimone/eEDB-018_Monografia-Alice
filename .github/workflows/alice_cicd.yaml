@@ -23,14 +23,9 @@ jobs:
           python-version: '3.9'
 
       - name: 📦 Instalar Dependências (Framework A.L.I.C.E.)
-        run: |
-          python -m pip install --upgrade pip setuptools wheel
-          # Instalar Cython antes previne o erro de build do PyYAML
-          pip install "Cython<3.0"
-          # Instalar dependências base
-          pip install -r requirements.txt
-          # Instalar ferramentas de validação
-          pip install jsonschema soda-core
+              run: |
+                python -m pip install --upgrade pip
+                pip install jsonschema soda-core
 
       - name: 🔍 Validar Estrutura e Quebra de Contrato (JSON/YAML)
         id: contract_validation
